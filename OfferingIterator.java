@@ -3,8 +3,8 @@ public class OfferingIterator implements ListIterator{
 	private OfferingList offeringList;
 	int pos=0;
 
-	OfferingIterator(OfferingList offeringList){
-		this.offeringList = offeringList;
+	public OfferingIterator(OfferingList offeringList) {
+		this.offeringList=offeringList;
 	}
 
 	public boolean hasNext() {
@@ -15,7 +15,8 @@ public class OfferingIterator implements ListIterator{
 	}
 
 	public Offering next() {
-		Offering offering = (Offering) offeringList.get(pos++);
+		Offering offering = offeringList.get(pos);
+		pos+=1;
 		return offering;
 	}
 

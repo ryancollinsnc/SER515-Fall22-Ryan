@@ -3,18 +3,18 @@ import java.io.*;
 
 public class Facade{
 
-	private int UserType;
-	private Product theSelectedProduct;
+	int UserType;
+	Product theSelectedProduct;
 	private int nProductCategory;
-	private ClassProductList theProductList;
+	ClassProductList theProductList;
 	private Person thePerson;
 	private ArrayList<String> BuyerName = new ArrayList<>();
 	private ArrayList<String> BuyerPass = new ArrayList<>();
 	private ArrayList<String> SellerName = new ArrayList<>();
 	private ArrayList<String> SellerPass = new ArrayList<>();
 	private String name;
-	private Trading trades = new Trading();
-
+	Trading trades = new Trading();
+	private OfferingList bidProducts = new OfferingList();
 
 	public boolean login() {
 		int temp=-1;
@@ -78,6 +78,7 @@ public class Facade{
 	public void addTrading() {
 		System.out.print("\nOffer to be made available: ");
 		Offering o = new Offering(this.theSelectedProduct.name, this.theSelectedProduct.category);
+		o.seller_name = this.name;
 		trades.offeringList.add(o);
 		System.out.println(o.name);
 		this.thePerson.productList.remove(theSelectedProduct);
@@ -86,20 +87,56 @@ public class Facade{
 
 	public void viewTrading() {
 		System.out.println("\nOffers Currently for Trade: ");
-		for(Offering i: trades.offeringList) // Iterator here
-			System.out.println(i.name);
+		OfferingIterator iter = new OfferingIterator(trades.offeringList);
+		while (iter.hasNext()) { // Iterator here
+			Offering i = iter.next();
+			System.out.println("Product Name: " + i.name + "\t\tSeller: " + i.seller_name + "\t\tBid: " + i.bid + "\t\tBid by: " + i.bid_name);
+
+		}
 	}
 
 	public void decideBidding() {
-
+		Scanner inp = new Scanner(System.in);
+		viewTrading();
+		Product a = selectProduct();
+		this.theSelectedProduct = a;
+		if(a==null)
+			return;
+		System.out.println("Enter seller name: ");
+		String seller = inp.nextLine();
+		Offering o = new Offering(a.name, a.category);
+		System.out.println("Enter bid amount for " + o.name);
+		o.bid = inp.nextInt();
+		o.bid_name = name;
+		o.seller_name = seller;
+		bidProducts.add(o);
 	}
 
 	public void discussBidding() {
-
+		viewTrading();
+		System.out.println("These are current trades and prices - Make bid higher that current bid");
 	}
 
 	public void submitBidding() {
-
+		OfferingIterator iter=new OfferingIterator(this.bidProducts);
+		OfferingIterator iter1=new OfferingIterator(trades.offeringList);
+		while(iter.hasNext()) { // Iterator here
+			Offering i=iter.next();
+			while(iter1.hasNext()){ // Iterator here
+				Offering j=iter1.next();
+				if(i.name.equalsIgnoreCase(j.name) && i.seller_name.equalsIgnoreCase(j.seller_name)){
+					if(i.bid <= j.bid) {
+						System.out.println("Make Higher Bid for " + j.name + " Seller: " + j.seller_name);
+						break;
+					}
+					j.bid_name = i.bid_name;
+					j.bid = i.bid;
+					System.out.println("BIDS MADE FOR - " + j.name + " " + "Seller: " + j.seller_name);
+					break;
+				}
+			}
+		}
+		this.bidProducts = new OfferingList();
 	}
 
 	public void remind() {
@@ -121,7 +158,7 @@ public class Facade{
 			Scanner myReader = new Scanner(myObj);
 			while (myReader.hasNextLine()) {
 				String data = myReader.nextLine();
-				String data1[]= data.split(":");
+				String data1[] = data.split(":");
 				Product p = new Product(data1[1], data1[0]);
 				this.theProductList.add(p);
 			}
@@ -141,9 +178,11 @@ public class Facade{
 				String data = myReader.nextLine();
 				String data1[]= data.split(":");
 				if(data1[0].equalsIgnoreCase(this.name)){
-					for(Product i: this.theProductList){ // Iterator here
-						if(i.name.equalsIgnoreCase(data1[1])) {
-							this.thePerson.productList.add(i);
+					ProductIterator iter = new ProductIterator(this.theProductList);
+					while(iter.hasNext()){//Iterator used here
+						Product temp= iter.next();
+						if(temp.name.equalsIgnoreCase(data1[1])) {
+							this.thePerson.productList.add(temp);
 							break;
 						}
 					}
@@ -158,45 +197,92 @@ public class Facade{
 	}
 
 	public Product selectProduct() {
-		System.out.println("\n\n");
-		for(Product i: this.thePerson.productList) { // Iterator here
-			System.out.println(i.name);
+		if(this.UserType==1)
+			System.out.println("\n\nProducts Not Traded Currently:");
+		else
+			System.out.println("\n\nProduct Requested by User: ");
+		ProductIterator iter=new ProductIterator(this.thePerson.productList);
+		while(iter.hasNext()) {//Iterator Used Here
+			Product temp=iter.next();
+			System.out.println(temp.name);
 		}
-		System.out.println("Enter Product Name:");
+
+		if(this.UserType==1)
+			System.out.println("\nEnter Product Name (Or Enter 'e' to Exit):");
+		else
+			System.out.println("\nEnter Product to Bid on (Or Enter 'e' to Exit):");
 		Scanner scan = new Scanner(System.in);
 		String product_chosen = scan.next();
-		for(Product i: this.thePerson.productList) { // Iterator here
+		ProductIterator iter1=new ProductIterator(this.thePerson.productList);
+		while(iter1.hasNext()) { // Iterator here
+			Product i=iter1.next();
 			if(product_chosen.equalsIgnoreCase(i.name)) {
 				return i;
 			}
+			else if(product_chosen.equalsIgnoreCase("e"))
+				return null;
 		}
 		return null;
 	}
 
 	public void productOperation() {
-		Product a = selectProduct();
-		this.theSelectedProduct = a;
-		System.out.println(a.name);
-		if (a.category.equalsIgnoreCase("Meat"))
-			this.thePerson.productMenu = this.thePerson.createProductMenu(0);
-		else
-			this.thePerson.productMenu = this.thePerson.createProductMenu(1);
-		this.thePerson.showMenu();
-		this.thePerson.showAddButton();
-		this.thePerson.showViewButton();
-		this.thePerson.showRadioButton();
-		this.thePerson.showLabels();
-		this.thePerson.showCombos();
+		Product a = null;
+		int option;
+		if(this.UserType==1) {
+			do {
+				System.out.println("\n\n1) Add Product to Trade\n2) View Trading\n3) Exit");
+				Scanner inp = new Scanner(System.in);
+				option = inp.nextInt();
+				switch (option) {
+					case 1:
+						a = selectProduct();
+						this.theSelectedProduct = a;
+						if (a == null) {
+							continue;
+						}
+						System.out.println(a.name);
+						if (a.category.equalsIgnoreCase("Meat"))
+							this.thePerson.productMenu = this.thePerson.createProductMenu(0);
+						else
+							this.thePerson.productMenu = this.thePerson.createProductMenu(1);
+						this.thePerson.showMenu();
+						this.thePerson.showAddButton();
+						this.thePerson.showViewButton();
+						this.thePerson.showRadioButton();
+						this.thePerson.showLabels();
+						this.thePerson.showCombos();
+						addTrading();
+						break;
 
-		if(this.UserType==0){
-			this.decideBidding();
-			this.discussBidding();
-			this.submitBidding();
+					case 2:
+						viewTrading();
+						break;
+					case 3:
+						break;
+				}
+			}while(option!=3);
 		}
 
 		else{
-			this.addTrading();
-			this.viewTrading();
+			do{
+				System.out.println("\n\n1) See Current Bids\n2) Make Bid(s)\n3) Submit Bids\n4) Exit");
+				Scanner inp = new Scanner(System.in);
+				System.out.println("Enter option:");
+				option = inp.nextInt();
+				switch(option){
+					case 1:
+						discussBidding();
+						break;
+					case 2:
+						decideBidding();
+						break;
+					case 3:
+						submitBidding();
+						break;
+					case 4:
+						break;
+				}
+			}while(option!=4);
 		}
 	}
 

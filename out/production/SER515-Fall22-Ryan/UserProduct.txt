@@ -5,3 +5,5 @@ mimi:Onion
 pepe:Beef
 pepe:Tomato
 pepe:Onion
+kaka:Beef
+kaka:Onion
