@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-public class Facade {
+public class Facade{
 
 	private int UserType;
 
@@ -127,4 +127,7 @@ public class Facade {
 
 	}
 
+	public void accept(NodeVisitor visitor) {
+		System.out.println("Facade Reminder ...");
+	}
 }

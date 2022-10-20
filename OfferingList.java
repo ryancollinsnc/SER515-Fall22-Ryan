@@ -1,6 +1,6 @@
-public class OfferingList {
-
-	private Offering[] offering;
+import java.util.ArrayList;
+import java.util.Collection;
+public class OfferingList extends ArrayList {
 
 	private Trading trading;
 

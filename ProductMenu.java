@@ -1,7 +1,5 @@
 public interface ProductMenu {
 
-	Person person= null;
-
 	public abstract void showMenu();
 
 	public abstract void showAddButton();
