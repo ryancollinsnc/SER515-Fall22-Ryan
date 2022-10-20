@@ -1,6 +1,8 @@
 public abstract class Person {
 
 	ProductMenu productMenu;
+	TradingMenu tradingMenu;
+	ClassProductList productList = new ClassProductList();
 
 	public abstract void showMenu();
 

@@ -1,5 +1,9 @@
 public class Offering {
+	String name;
+	String category;
 
-	private OfferingList offeringList;
-
+	Offering(String name, String category){
+		this.name = name;
+		this.category = category;
+	}
 }

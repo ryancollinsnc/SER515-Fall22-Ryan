@@ -1,10 +1,8 @@
-import java.sql.Array;
+
 import java.util.ArrayList;
-import java.util.Collection;
-public class ClassProductList extends ArrayList {
+public class ClassProductList extends ArrayList<Product> {
 
 	private ReminderVisitor reminderVisitor;
-
 	private ProductIterator productIterator;
 	public void accept(NodeVisitor visitor) {
 		System.out.println("Class Product List Reminder ...");

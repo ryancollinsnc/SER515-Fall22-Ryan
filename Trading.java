@@ -1,11 +1,11 @@
 public class Trading {
 
-	private OfferingList offeringList;
-
-	private Product product;
+	OfferingList offeringList = new OfferingList();
+	ReminderVisitor reminderVisitor;
 
 	public void accept(NodeVisitor visitor) {
 		System.out.println("Trading Reminder ...");
+		visitor.visitTrading(this);
 	}
 
 }
