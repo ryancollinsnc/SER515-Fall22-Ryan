@@ -18,24 +18,17 @@ public class Main {
                         System.out.println("Login Failed");
                         continue;
                     }
+                    System.out.println("<<FACADE DESIGN PATTERN USED HERE>>");
                     object.createUser();
                     object.attachProductToUser();
                     object.productOperation();
                     break;
 
                 case 2:
+                    Reminder r = new Reminder(object);
+                    r.remind();
                     break;
             }
         }while(option!=3);
     }
-
-        /*try{
-            for(int i=0; i<10; i++){
-                Product p = object.thePerson.productList.get(i);
-                System.out.println(p.name + " " + p.category);
-            }
-        }
-        catch(Exception e){
-            System.out.println(e);
-        }*/
 }

@@ -4,6 +4,6 @@ public class OfferingList extends ArrayList<Offering> {
 
 	private Trading trading;
 
-	OfferingIterator offeringIterator;
+	private OfferingIterator offeringIterator;
 
 }

@@ -88,7 +88,8 @@ public class Facade{
 	public void viewTrading() {
 		System.out.println("\nOffers Currently for Trade: ");
 		OfferingIterator iter = new OfferingIterator(trades.offeringList);
-		while (iter.hasNext()) { // Iterator here
+		System.out.println("\n<<ITERATOR DESIGN PATTERN USED HERE TO ITERATE ELEMENTS>>");
+		while (iter.hasNext()) {
 			Offering i = iter.next();
 			System.out.println("Product Name: " + i.name + "\t\tSeller: " + i.seller_name + "\t\tBid: " + i.bid + "\t\tBid by: " + i.bid_name);
 
@@ -118,21 +119,31 @@ public class Facade{
 	}
 
 	public void submitBidding() {
-		OfferingIterator iter=new OfferingIterator(this.bidProducts);
+		OfferingIterator iter=new OfferingIterator(bidProducts);
 		OfferingIterator iter1=new OfferingIterator(trades.offeringList);
-		while(iter.hasNext()) { // Iterator here
+		for(Offering i : bidProducts){
+			System.out.println(i.name + " " + i.seller_name + " " + i.bid);
+		}
+
+		for(Offering i : trades.offeringList){
+			System.out.println(i.name + " " + i.seller_name + " " + i.bid);
+		}
+
+		System.out.println("\n<<ITERATOR DESIGN PATTERN USED HERE TO ITERATE ELEMENTS>>");
+		while(iter.hasNext()) {
 			Offering i=iter.next();
+			iter1.moveToHead();
 			while(iter1.hasNext()){ // Iterator here
 				Offering j=iter1.next();
 				if(i.name.equalsIgnoreCase(j.name) && i.seller_name.equalsIgnoreCase(j.seller_name)){
 					if(i.bid <= j.bid) {
-						System.out.println("Make Higher Bid for " + j.name + " Seller: " + j.seller_name);
-						break;
+						System.out.println("Make Higher Bid for " + j.name + "\tSeller: " + j.seller_name);
 					}
-					j.bid_name = i.bid_name;
-					j.bid = i.bid;
-					System.out.println("BIDS MADE FOR - " + j.name + " " + "Seller: " + j.seller_name);
-					break;
+					else {
+						j.bid_name = i.bid_name;
+						j.bid = i.bid;
+						System.out.println("BIDS MADE FOR - " + j.name + " " + "\tSeller: " + j.seller_name);
+					}
 				}
 			}
 		}
@@ -179,7 +190,8 @@ public class Facade{
 				String data1[]= data.split(":");
 				if(data1[0].equalsIgnoreCase(this.name)){
 					ProductIterator iter = new ProductIterator(this.theProductList);
-					while(iter.hasNext()){//Iterator used here
+					System.out.println("\n<<ITERATOR DESIGN PATTERN USED HERE TO ADD ELEMENTS TO USER>>");
+					while(iter.hasNext()){
 						Product temp= iter.next();
 						if(temp.name.equalsIgnoreCase(data1[1])) {
 							this.thePerson.productList.add(temp);
@@ -202,7 +214,8 @@ public class Facade{
 		else
 			System.out.println("\n\nProduct Requested by User: ");
 		ProductIterator iter=new ProductIterator(this.thePerson.productList);
-		while(iter.hasNext()) {//Iterator Used Here
+		System.out.println("\n<<ITERATOR DESIGN PATTERN USED HERE TO ITERATE ELEMENTS>>");
+		while(iter.hasNext()) {
 			Product temp=iter.next();
 			System.out.println(temp.name);
 		}
@@ -214,7 +227,8 @@ public class Facade{
 		Scanner scan = new Scanner(System.in);
 		String product_chosen = scan.next();
 		ProductIterator iter1=new ProductIterator(this.thePerson.productList);
-		while(iter1.hasNext()) { // Iterator here
+		System.out.println("\n<<ITERATOR DESIGN PATTERN USED HERE TO ITERATE ELEMENTS>>");
+		while(iter1.hasNext()) {
 			Product i=iter1.next();
 			if(product_chosen.equalsIgnoreCase(i.name)) {
 				return i;
@@ -245,6 +259,8 @@ public class Facade{
 							this.thePerson.productMenu = this.thePerson.createProductMenu(0);
 						else
 							this.thePerson.productMenu = this.thePerson.createProductMenu(1);
+						System.out.println("<<BRIDGE DESIGN PATTERN USED HERE TO LINK APPROPRIATE MENU>>");
+						System.out.println("\n\n<<FACTORY DESIGN PATTERN USED HERE TO BUILD APPROPRIATE MENU>>");
 						this.thePerson.showMenu();
 						this.thePerson.showAddButton();
 						this.thePerson.showViewButton();

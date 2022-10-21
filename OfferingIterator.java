@@ -26,5 +26,4 @@ public class OfferingIterator implements ListIterator{
 	public void remove() {
 		offeringList.remove(pos);
 	}
-
 }

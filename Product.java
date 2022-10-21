@@ -1,6 +1,6 @@
 public class Product {
 
-	private Trading trading;
+	Trading trading;
 
 	String name;
 	String category;
@@ -12,7 +12,7 @@ public class Product {
 
 	public void accept(NodeVisitor visitor) {
 		System.out.println("Product Reminder ...");
-		visitor.visitProduct(this);
+		visitor.visitProduct();
 	}
 
 }
