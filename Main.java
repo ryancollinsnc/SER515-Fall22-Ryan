@@ -3,32 +3,27 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         // Facade Pattern called
-        Facade object = new Facade();
-        object.createProductList();
-        int option;
-        do {
-            System.out.println("\n\n1) LOGIN PAGE\n2) REMINDER\n3) EXIT");
+        int tmp=-1;
+        Facade fc = new Facade();
+        fc.createProductList();
+        while(tmp!=2) {
+            System.out.println("1) Login to Buyer / Seller Account");
+            System.out.println("2) Quit Program");
             System.out.print("Enter option: ");
-            Scanner inp = new Scanner(System.in);
-            option = inp.nextInt();
-            switch (option) {
-                case 1:
-                    boolean verify = object.login();
-                    if (!verify) {
-                        System.out.println("Login Failed");
-                        continue;
-                    }
-                    System.out.println("<<FACADE DESIGN PATTERN USED HERE>>");
-                    object.createUser();
-                    object.attachProductToUser();
-                    object.productOperation();
-                    break;
-
-                case 2:
-                    Reminder r = new Reminder(object);
-                    r.remind();
-                    break;
+            Scanner sc = new Scanner(System.in);
+            tmp = sc.nextInt();
+            if (tmp==1) {
+                if (!fc.login()) {
+                    System.out.println("Login has Failed - Try Again");
+                }else {
+                    //Facade Design Pattern
+                    fc.createUser();
+                    fc.attachProductToUser();
+                    fc.productOperation();
+                }
             }
-        }while(option!=3);
+        }
+        Reminder rem = new Reminder(fc);
+        rem.remind();
     }
 }

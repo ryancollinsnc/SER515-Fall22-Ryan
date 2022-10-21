@@ -1,16 +1,14 @@
 public class Offering {
-	String name;
-	String category;
-
-	int bid;
-	String bid_name;
-	String seller_name;
-
-	Offering(String name, String category){
-		this.name = name;
-		this.category = category;
-		this.bid = 0;
-		this.bid_name = "No name";
-		this.seller_name = "no name";
+	String n;
+	String t;
+	int biddingAmount;
+	String bidderName;
+	String sellerName;
+	Offering(String n, String t){
+		this.biddingAmount = 0;
+		this.n = n;
+		this.t = t;
+		this.sellerName = "Seller does not exist";
+		this.bidderName = "Bidder does not exist";
 	}
 }

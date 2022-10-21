@@ -1,29 +1,18 @@
 public class OfferingIterator implements ListIterator{
-
-	private OfferingList offeringList;
-	int pos=0;
-
+	OfferingList offeringList;
+	int index=0;
 	public OfferingIterator(OfferingList offeringList) {
 		this.offeringList=offeringList;
 	}
-
 	public boolean hasNext() {
-		if (pos >= offeringList.size() || offeringList.get(pos) == null)
-			return false;
-		else
-			return true;
+		return index < offeringList.size() && offeringList.get(index) != null;
 	}
-
 	public Offering next() {
-		Offering offering = offeringList.get(pos);
-		pos+=1;
+		Offering offering = offeringList.get(index);
+		index+=1;
 		return offering;
 	}
-
 	public void moveToHead() {
-		pos = 0;
-	}
-	public void remove() {
-		offeringList.remove(pos);
+		index = 0;
 	}
 }

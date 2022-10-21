@@ -1,16 +1,25 @@
 public class Reminder {
+    Facade fac;
 
-    Facade fo = new Facade();
-
-    public Reminder(Facade object) {
-        this.fo = object;
+    static {
+        new Facade();
     }
 
+    public Reminder(Facade fac) {
+        this.fac = fac;
+    }
     public void remind() {
-        ReminderVisitor rv = new ReminderVisitor(fo.trades);
-        System.out.println("<<VISITOR DESIGN PATTERN USED HERE TO VISIT OBJECTS>>");
-        rv.visitFacade(fo);
+        ReminderVisitor rv = new ReminderVisitor(fac.trades);
+        //Visitor Design Pattern
+        rv.visitFacade(fac);
         rv.visitProduct();
         rv.visitTrading();
+        ClassProductList cl = new ClassProductList();
+        cl.accept(rv);
+        fac.accept(rv);
+        Product pr = new Product(" ", " ");
+        pr.accept(rv);
+        Trading tr = new Trading();
+        tr.accept(rv);
     }
 }

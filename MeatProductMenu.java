@@ -1,27 +1,20 @@
 public class MeatProductMenu implements ProductMenu {
-
 	public void showMenu() {
-		System.out.println("Meat Menu Displayed");
+		System.out.println("**** Meat Menu ****");
 	}
-
 	public void showAddButton() {
-		System.out.println("Meat Menu Add Button");
+		System.out.println("**** Add Button ****");
 	}
-
 	public void showViewButton() {
-		System.out.println("Meat Menu View Button");
+		System.out.println("**** View Button ****");
 	}
-
 	public void showRadioButton() {
-		System.out.println("Meat Menu Radio Button");
+		System.out.println("**** Radio Button ****");
 	}
-
 	public void showLabels() {
-		System.out.println("Meat Menu Labels");
+		System.out.println("**** Labels ****");
 	}
-
 	public void showComboxes() {
-		System.out.println("Meat Menu Combo Boxes");
+		System.out.println("**** Combo Boxes ****");
 	}
-
 }

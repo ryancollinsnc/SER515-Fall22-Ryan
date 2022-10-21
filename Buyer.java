@@ -1,15 +1,15 @@
 public class Buyer extends Person {
 
 	public void showMenu() {
-		System.out.println("\nBuyer Menu Items: ");
+		System.out.println("\nBuyer Menu: ");
 		productMenu.showMenu();
 	}
 
-	public ProductMenu createProductMenu(int menuType){
-		if(menuType==0) {
-			return new MeatProductMenu();
+	public ProductMenu createProductMenu(int mtype){
+		if(mtype==1) {
+			return new ProduceProductMenu();
 		}
 		else
-			return new ProduceProductMenu();
+			return new MeatProductMenu();
 	}
 }

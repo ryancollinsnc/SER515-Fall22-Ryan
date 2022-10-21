@@ -5,93 +5,105 @@ public class Facade{
 
 	int UserType;
 	Product theSelectedProduct;
+	@SuppressWarnings("all")
 	private int nProductCategory;
 	ClassProductList theProductList;
 	private Person thePerson;
-	private ArrayList<String> BuyerName = new ArrayList<>();
-	private ArrayList<String> BuyerPass = new ArrayList<>();
-	private ArrayList<String> SellerName = new ArrayList<>();
-	private ArrayList<String> SellerPass = new ArrayList<>();
+
+	ArrayList<String> bUserName = new ArrayList<>();
+	ArrayList<String> bPass = new ArrayList<>();
+	ArrayList<String> sUserName = new ArrayList<>();
+	ArrayList<String> sPass = new ArrayList<>();
 	private String name;
 	Trading trades = new Trading();
-	private OfferingList bidProducts = new OfferingList();
+
+	//OfferingList bidProducts = new OfferingList();
 
 	public boolean login() {
 		int temp=-1;
+		File reader;
+		Scanner myReader;
 		try {
-			File myObj = new File("BuyerInfo.txt");
-			Scanner myReader = new Scanner(myObj);
+			reader = new File("BuyerInfo.txt");
+			myReader = new Scanner(reader);
 			while (myReader.hasNextLine()) {
 				String data = myReader.nextLine();
-				String data1[] = data.split(":");
-				BuyerName.add(data1[0]);
-				BuyerPass.add(data1[1]);
-			}
-			myReader.close();
-			myObj = new File("SellerInfo.txt");
-			myReader = new Scanner(myObj);
-			while (myReader.hasNextLine()) {
-				String data = myReader.nextLine();
-				String data1[]= data.split(":");
-				SellerName.add(data1[0]);
-				SellerPass.add(data1[1]);
-				//System.out.println(SellerPass);
+				String[] data_array = data.split(":");
+				bUserName.add(data_array[0]);
+				bPass.add(data_array[1]);
 			}
 			myReader.close();
 		} catch (FileNotFoundException e) {
-			System.out.println("An error occurred.");
-			e.printStackTrace();
+			System.out.println("File not found");
+		}
+
+		try{
+			reader = new File("SellerInfo.txt");
+			myReader = new Scanner(reader);
+			while (myReader.hasNextLine()) {
+				String data = myReader.nextLine();
+				String[] data_array = data.split(":");
+				sUserName.add(data_array[0]);
+				sPass.add(data_array[1]);
+			}
+			myReader.close();
+		}  catch (FileNotFoundException e){
+			System.out.println("File not found");
 		}
 
 		System.out.println("Enter Username ");
-		//@SuppressWarnings("resource")
 		Scanner scan = new Scanner(System.in);
 		String username = scan.next();
 		System.out.println("Enter Password ");
 		String password = scan.next();
 
-		for(int i=0; i< BuyerName.size();i++){
-			if(BuyerName.get(i).equalsIgnoreCase(username)==true){
+		for(int i=0; i< sUserName.size();i++){
+			if(sUserName.get(i).equalsIgnoreCase(username)){
 				temp=i;
 			}
 		}
-		if(temp!=-1 && password.equalsIgnoreCase(BuyerPass.get(temp))==true){
-			UserType=0;
-			this.name = username;
-			return true;
-		}
-		for(int i=0; i< SellerName.size();i++){
-			if(SellerName.get(i).equalsIgnoreCase(username)==true){
-				temp=i;
-			}
-		}
-		if(temp!=-1 && password.equalsIgnoreCase(SellerPass.get(temp))==true){
+		if(temp!=-1 && password.equalsIgnoreCase(sPass.get(temp))){
 			UserType=1;
 			this.name = username;
 			return true;
 		}
 
-		System.out.println("No user");
+		for(int i=0; i< bUserName.size();i++){
+			if(bUserName.get(i).equalsIgnoreCase(username)){
+				temp=i;
+			}
+		}
+		if(temp!=-1 && password.equalsIgnoreCase(bPass.get(temp))){
+			UserType=0;
+			this.name = username;
+			return true;
+		}
+
+		System.out.println("Username / Password Not Found");
 		return false;
 	}
 
 	public void addTrading() {
-		System.out.print("\nOffer to be made available: ");
-		Offering o = new Offering(this.theSelectedProduct.name, this.theSelectedProduct.category);
-		o.seller_name = this.name;
+		System.out.println();
+		System.out.println("Buyer Items: ");
+		Offering o = new Offering(this.theSelectedProduct.n, this.theSelectedProduct.t);
+		o.sellerName = this.name;
 		trades.offeringList.add(o);
-		System.out.println(o.name);
 		this.thePerson.productList.remove(theSelectedProduct);
-		System.out.println("Offer for " + o.name + " added to Trading");
+		System.out.println(o.n + " added to Trade List");
 	}
 
 	public void viewTrading() {
-		System.out.println("\nOffers Currently for Trade: ");
-		OfferingIterator iter = new OfferingIterator(trades.offeringList);
-		System.out.println("\n<<ITERATOR DESIGN PATTERN USED HERE TO ITERATE ELEMENTS>>");
-		while (iter.hasNext()) {
-			Offering i = iter.next();
-			System.out.println("Product Name: " + i.name + "\t\tSeller: " + i.seller_name + "\t\tBid: " + i.bid + "\t\tBid by: " + i.bid_name);
+		System.out.println();
+		System.out.println("Current Trade List: ");
+		OfferingIterator iterator = new OfferingIterator(trades.offeringList); // Iterator Design Pattern
+		while (iterator.hasNext()) {
+			Offering i = iterator.next();
+			System.out.println("Product Name: " + i.n);
+			System.out.println("Bid: " + i.biddingAmount);
+			System.out.println("Seller: " + i.sellerName);
+			System.out.println("Bid by: " + i.bidderName);
+			System.out.println();
 
 		}
 	}
@@ -99,67 +111,52 @@ public class Facade{
 	public void decideBidding() {
 		Scanner inp = new Scanner(System.in);
 		viewTrading();
-		Product a = selectProduct();
-		this.theSelectedProduct = a;
-		if(a==null)
+		Product prod = selectProduct();
+		this.theSelectedProduct = prod;
+		if(prod==null)
 			return;
-		System.out.println("Enter seller name: ");
+		System.out.println("Enter seller name of product: ");
 		String seller = inp.nextLine();
-		Offering o = new Offering(a.name, a.category);
-		System.out.println("Enter bid amount for " + o.name);
-		o.bid = inp.nextInt();
-		o.bid_name = name;
-		o.seller_name = seller;
-		bidProducts.add(o);
+		Offering o = new Offering(prod.n, prod.t);
+		System.out.println("Enter bid amount for " + o.n + ": ");
+		o.biddingAmount = inp.nextInt();
+		o.bidderName = name;
+		o.sellerName = seller;
+		submitBidding(o);
 	}
 
 	public void discussBidding() {
 		viewTrading();
-		System.out.println("These are current trades and prices - Make bid higher that current bid");
 	}
 
-	public void submitBidding() {
-		OfferingIterator iter=new OfferingIterator(bidProducts);
-		OfferingIterator iter1=new OfferingIterator(trades.offeringList);
-		for(Offering i : bidProducts){
-			System.out.println(i.name + " " + i.seller_name + " " + i.bid);
-		}
-
-		for(Offering i : trades.offeringList){
-			System.out.println(i.name + " " + i.seller_name + " " + i.bid);
-		}
-
-		System.out.println("\n<<ITERATOR DESIGN PATTERN USED HERE TO ITERATE ELEMENTS>>");
-		while(iter.hasNext()) {
-			Offering i=iter.next();
-			iter1.moveToHead();
-			while(iter1.hasNext()){ // Iterator here
-				Offering j=iter1.next();
-				if(i.name.equalsIgnoreCase(j.name) && i.seller_name.equalsIgnoreCase(j.seller_name)){
-					if(i.bid <= j.bid) {
-						System.out.println("Make Higher Bid for " + j.name + "\tSeller: " + j.seller_name);
-					}
-					else {
-						j.bid_name = i.bid_name;
-						j.bid = i.bid;
-						System.out.println("BIDS MADE FOR - " + j.name + " " + "\tSeller: " + j.seller_name);
-					}
+	public void submitBidding(Offering o) {
+		OfferingIterator iterator = new OfferingIterator(trades.offeringList); //Iterator Design Pattern
+		while (iterator.hasNext()) {
+			Offering i = iterator.next();
+			if (i.n.equalsIgnoreCase(o.n) && i.sellerName.equalsIgnoreCase(o.sellerName)) {
+				if (i.biddingAmount >= o.biddingAmount) {
+					System.out.println("Bid higher for " + i.n);
+					System.out.println("Seller: " + i.sellerName);
+				} else {
+					i.bidderName = o.bidderName;
+					i.biddingAmount = o.biddingAmount;
+					System.out.println("Bid for " + i.n);
+					System.out.println("Seller: " + i.sellerName);
+					System.out.println("Completed");
 				}
 			}
 		}
-		this.bidProducts = new OfferingList();
-	}
-
-	public void remind() {
-
 	}
 
 	public void createUser() {
-		if(this.UserType==0)
+		if(this.UserType==0) {
 			this.thePerson = new Buyer();
-		else
+			this.thePerson.tradingMenu = new BuyerTradingMenu();
+		}
+		else {
 			this.thePerson = new Seller();
-		System.out.println("User Created\n");
+			this.thePerson.tradingMenu = new SellerTradingMenu();
+		}
 	}
 
 	public void createProductList() {
@@ -169,8 +166,8 @@ public class Facade{
 			Scanner myReader = new Scanner(myObj);
 			while (myReader.hasNextLine()) {
 				String data = myReader.nextLine();
-				String data1[] = data.split(":");
-				Product p = new Product(data1[1], data1[0]);
+				String[] data_array = data.split(":");
+				Product p = new Product(data_array[1], data_array[0]);
 				this.theProductList.add(p);
 			}
 			myReader.close();
@@ -183,17 +180,16 @@ public class Facade{
 
 	public void attachProductToUser() {
 		try {
-			File myObj = new File("UserProduct.txt");
-			Scanner myReader = new Scanner(myObj);
+			File reader = new File("UserProduct.txt");
+			Scanner myReader = new Scanner(reader);
 			while (myReader.hasNextLine()) {
 				String data = myReader.nextLine();
-				String data1[]= data.split(":");
-				if(data1[0].equalsIgnoreCase(this.name)){
-					ProductIterator iter = new ProductIterator(this.theProductList);
-					System.out.println("\n<<ITERATOR DESIGN PATTERN USED HERE TO ADD ELEMENTS TO USER>>");
-					while(iter.hasNext()){
-						Product temp= iter.next();
-						if(temp.name.equalsIgnoreCase(data1[1])) {
+				String[] data_array = data.split(":");
+				if(data_array[0].equalsIgnoreCase(this.name)){
+					ProductIterator iterator = new ProductIterator(this.theProductList); // Iterator Design Pattern
+					while(iterator.hasNext()){
+						Product temp= iterator.next();
+						if(temp.n.equalsIgnoreCase(data_array[1])) {
 							this.thePerson.productList.add(temp);
 							break;
 						}
@@ -203,65 +199,82 @@ public class Facade{
 			myReader.close();
 		}
 		catch(FileNotFoundException e){
-			System.out.println("An error occurred.");
-			e.printStackTrace();
+			System.out.println("File not found");
 		}
 	}
 
 	public Product selectProduct() {
-		if(this.UserType==1)
-			System.out.println("\n\nProducts Not Traded Currently:");
+		if(this.UserType==0)
+			System.out.println("User Products Demanded:");
 		else
-			System.out.println("\n\nProduct Requested by User: ");
-		ProductIterator iter=new ProductIterator(this.thePerson.productList);
-		System.out.println("\n<<ITERATOR DESIGN PATTERN USED HERE TO ITERATE ELEMENTS>>");
-		while(iter.hasNext()) {
-			Product temp=iter.next();
-			System.out.println(temp.name);
+			System.out.println("Available products to put up for trade: ");
+		ProductIterator iterator =new ProductIterator(this.thePerson.productList);
+		while(iterator.hasNext()) { // Iterator Design Pattern
+			Product temp=iterator.next();
+			System.out.println(temp.n);
 		}
 
-		if(this.UserType==1)
-			System.out.println("\nEnter Product Name (Or Enter 'e' to Exit):");
+		if(this.UserType==0)
+			System.out.println("\nEnter product name to bid on it");
 		else
-			System.out.println("\nEnter Product to Bid on (Or Enter 'e' to Exit):");
+			System.out.println("\nEnter product name to put for trade");
+
 		Scanner scan = new Scanner(System.in);
-		String product_chosen = scan.next();
-		ProductIterator iter1=new ProductIterator(this.thePerson.productList);
-		System.out.println("\n<<ITERATOR DESIGN PATTERN USED HERE TO ITERATE ELEMENTS>>");
-		while(iter1.hasNext()) {
-			Product i=iter1.next();
-			if(product_chosen.equalsIgnoreCase(i.name)) {
-				return i;
+		String product_chosen = scan.nextLine();
+		iterator.moveToHead(); // Iterator Design Pattern
+		while(iterator.hasNext()) {
+			Product prod=iterator.next();
+			if(product_chosen.equalsIgnoreCase(prod.n)) {
+				return prod;
 			}
-			else if(product_chosen.equalsIgnoreCase("e"))
-				return null;
 		}
 		return null;
 	}
 
 	public void productOperation() {
-		Product a = null;
+		Product prod;
 		int option;
-		if(this.UserType==1) {
+		if(this.UserType==0) {
 			do {
-				System.out.println("\n\n1) Add Product to Trade\n2) View Trading\n3) Exit");
+				System.out.println();
+				System.out.println("1) View items being traded");
+				System.out.println("2) Make Bid for Item");
+				System.out.println("3) Logout");
 				Scanner inp = new Scanner(System.in);
+				System.out.println("Enter option:");
 				option = inp.nextInt();
 				switch (option) {
 					case 1:
-						a = selectProduct();
-						this.theSelectedProduct = a;
-						if (a == null) {
+						discussBidding();
+						break;
+					case 2:
+						decideBidding();
+						break;
+					case 3:
+						break;
+				}
+			}while (option != 3) ;
+		}
+
+		else{
+			do {
+				System.out.println("\n\n1) Add Trade\n2) View Trade\n3) Exit");
+				Scanner sc = new Scanner(System.in);
+				option = sc.nextInt();
+				switch (option) {
+					case 1:
+						prod = selectProduct();
+						this.theSelectedProduct = prod;
+						if (prod == null) {
 							continue;
 						}
-						System.out.println(a.name);
-						if (a.category.equalsIgnoreCase("Meat"))
-							this.thePerson.productMenu = this.thePerson.createProductMenu(0);
-						else
+						System.out.println(prod.n);
+						/*Bridge Pattern*/
+						if (prod.t.equalsIgnoreCase("Produce"))
 							this.thePerson.productMenu = this.thePerson.createProductMenu(1);
-						System.out.println("<<BRIDGE DESIGN PATTERN USED HERE TO LINK APPROPRIATE MENU>>");
-						System.out.println("\n\n<<FACTORY DESIGN PATTERN USED HERE TO BUILD APPROPRIATE MENU>>");
-						this.thePerson.showMenu();
+						else
+							this.thePerson.productMenu = this.thePerson.createProductMenu(0);
+						this.thePerson.showMenu(); // Factory Pattern
 						this.thePerson.showAddButton();
 						this.thePerson.showViewButton();
 						this.thePerson.showRadioButton();
@@ -277,28 +290,6 @@ public class Facade{
 						break;
 				}
 			}while(option!=3);
-		}
-
-		else{
-			do{
-				System.out.println("\n\n1) See Current Bids\n2) Make Bid(s)\n3) Submit Bids\n4) Exit");
-				Scanner inp = new Scanner(System.in);
-				System.out.println("Enter option:");
-				option = inp.nextInt();
-				switch(option){
-					case 1:
-						discussBidding();
-						break;
-					case 2:
-						decideBidding();
-						break;
-					case 3:
-						submitBidding();
-						break;
-					case 4:
-						break;
-				}
-			}while(option!=4);
 		}
 	}
 
